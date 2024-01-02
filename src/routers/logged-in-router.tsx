@@ -1,22 +1,22 @@
 import React from "react";
-import { isLoggedInVar } from "../apollo";
-import { gql, useQuery } from "@apollo/client";
-import { MeQuery } from "../gql/graphql";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from "react-router-dom";
+import { Restaurants } from "../pages/client/restaurants";
+import { Header } from "../components/header";
+import { useMe } from "../hooks/useMe";
 
-const ME_QUERY = gql`
-  query me {
-    me {
-      id
-      email
-      role
-      verified
-    }
-  }
-`;
+const ClientRoutes = () => [
+  <Route path="/" exact>
+    <Restaurants />
+  </Route>,
+];
 
 export const LoggedInRouter = () => {
-  const { data, loading, error } = useQuery<MeQuery>(ME_QUERY);
-
+  const { data, loading, error } = useMe();
   if (!data || loading || error) {
     return (
       <div className="h-screen flex justify-center items-center">
@@ -25,8 +25,12 @@ export const LoggedInRouter = () => {
     );
   }
   return (
-    <div>
-      <h1>{data.me.role}</h1>
-    </div>
+    <Router>
+      <Header />
+      <Switch>
+        {data.me.role === "Client" && ClientRoutes}
+        <Redirect to="/" />
+      </Switch>
+    </Router>
   );
 };
