@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { authTokenVar, isLoggedInVar } from "../apollo";
 import { LOCALSTORAGE_TOKEN } from "../constants";
 
-const LOGIN_MUTATION = gql`
+export const LOGIN_MUTATION = gql`
   mutation login($loginInput: LoginInput!) {
     login(input: $loginInput) {
       ok
@@ -31,7 +31,9 @@ export const Login = () => {
     getValues,
     formState: { errors, isValid },
     handleSubmit,
-  } = useForm<ILoginForm>();
+  } = useForm<ILoginForm>({
+    mode: "onChange",
+  });
 
   const onCompleted = (data: LoginMutation) => {
     const {
@@ -78,7 +80,7 @@ export const Login = () => {
             {...register("email", {
               required: "Email is required",
               pattern:
-                /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
             })}
             name="email"
             required
@@ -86,11 +88,11 @@ export const Login = () => {
             placeholder="Email"
             className="input"
           />
-          {errors.email?.message && (
-            <FormError errorMessage={errors.email?.message} />
-          )}
           {errors.email?.type === "pattern" && (
             <FormError errorMessage={"Please enter a valid email"} />
+          )}
+          {errors.email?.message && (
+            <FormError errorMessage={errors.email?.message} />
           )}
           <input
             {...register("password", {
@@ -104,9 +106,6 @@ export const Login = () => {
           />
           {errors.password?.message && (
             <FormError errorMessage={errors.password?.message} />
-          )}
-          {errors.password?.type === "minLength" && (
-            <FormError errorMessage="Password must be more than 10 chars." />
           )}
           <Button canClick={isValid} loading={loading} actionText="Log In" />
           {loginMutationResult?.login.error && (

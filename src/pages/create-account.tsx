@@ -13,7 +13,7 @@ import {
 } from "../gql/graphql";
 import { useHistory } from "react-router-dom";
 
-const CREATE_ACCOUNT_MUTATION = gql`
+export const CREATE_ACCOUNT_MUTATION = gql`
   mutation createAccount($createAccountInput: CreateAccountInput!) {
     createAccount(input: $createAccountInput) {
       ok
@@ -35,6 +35,7 @@ export const CreateAccount = () => {
     formState: { errors, isValid },
     handleSubmit,
   } = useForm<ICreateAccountForm>({
+    mode: "onChange",
     defaultValues: {
       role: UserRole.Client,
     },
@@ -90,7 +91,7 @@ export const CreateAccount = () => {
             {...register("email", {
               required: "Email is required",
               pattern:
-                /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
             })}
             required
             type="email"
@@ -114,9 +115,6 @@ export const CreateAccount = () => {
           />
           {errors.password?.message && (
             <FormError errorMessage={errors.password?.message} />
-          )}
-          {errors.password?.type === "minLength" && (
-            <FormError errorMessage="Password must be more than 10 chars." />
           )}
           <select {...register("role", { required: true })} className="input">
             {Object.keys(UserRole).map((role, index) => (
