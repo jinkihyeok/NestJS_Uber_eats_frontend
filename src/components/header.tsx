@@ -4,6 +4,7 @@ import { useMe } from "../hooks/useMe";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { isLoggedInVar } from "../apollo";
 
 export const Header: React.FC = () => {
   const { data } = useMe();
@@ -23,6 +24,7 @@ export const Header: React.FC = () => {
               className="w-36 flex items-center"
             />
           </Link>
+          <span onClick={() => isLoggedInVar(false)}>Logout</span>
           <span className="text-xs">
             <Link to="/edit-profile">
               <FontAwesomeIcon icon={faUser} className="text-xl" />

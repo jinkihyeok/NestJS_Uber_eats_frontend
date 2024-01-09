@@ -1,9 +1,10 @@
-import { gql, useQuery } from "@apollo/client";
-import React from "react";
+import { gql, useQuery, useSubscription } from "@apollo/client";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
   MyRestaurantQuery,
   MyRestaurantQueryVariables,
+  PendingOrdersSubscription,
 } from "../../gql/graphql";
 import { Link } from "react-router-dom";
 import { Dish } from "../../components/dish";
@@ -16,6 +17,7 @@ import {
   VictoryTooltip,
   VictoryVoronoiContainer,
 } from "victory";
+import { useHistory } from "react-router-dom";
 
 export const MY_RESTAURANT_QUERY = gql`
   query myRestaurant($input: MyRestaurantInput!) {
@@ -56,6 +58,25 @@ export const MY_RESTAURANT_QUERY = gql`
   }
 `;
 
+const PENDING_ORDERS_SUBSCRIPTION = gql`
+  subscription pendingOrders {
+    pendingOrders {
+      id
+      status
+      total
+      driver {
+        email
+      }
+      customer {
+        email
+      }
+      restaurant {
+        name
+      }
+    }
+  }
+`;
+
 export const MyRestaurant = () => {
   const { id } = useParams();
   const { data } = useQuery<MyRestaurantQuery, MyRestaurantQueryVariables>(
@@ -68,9 +89,18 @@ export const MyRestaurant = () => {
       },
     }
   );
-  console.log(data);
 
-  const triggerPaddle = () => {};
+  const { data: subscriptionData } = useSubscription<PendingOrdersSubscription>(
+    PENDING_ORDERS_SUBSCRIPTION
+  );
+
+  const history = useHistory();
+
+  useEffect(() => {
+    if (subscriptionData?.pendingOrders.id) {
+      history.push(`/orders/${subscriptionData.pendingOrders.id}`);
+    }
+  }, [subscriptionData]);
 
   return (
     <div>
@@ -90,10 +120,7 @@ export const MyRestaurant = () => {
         >
           Add Dish &rarr;
         </Link>
-        <span
-          onClick={triggerPaddle}
-          className="text-white bg-lime-700 py-3 px-10"
-        >
+        <span className="text-white bg-lime-700 py-3 px-10">
           Buy Promotion &rarr;
         </span>
         <div className="mt-10">

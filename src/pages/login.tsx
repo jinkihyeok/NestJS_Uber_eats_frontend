@@ -9,6 +9,7 @@ import { Button } from "../components/button";
 import { Link } from "react-router-dom";
 import { authTokenVar, isLoggedInVar } from "../apollo";
 import { LOCALSTORAGE_TOKEN } from "../constants";
+import { useMe } from "../hooks/useMe";
 
 export const LOGIN_MUTATION = gql`
   mutation login($loginInput: LoginInput!) {
@@ -35,6 +36,8 @@ export const Login = () => {
     mode: "onChange",
   });
 
+  const me = useMe();
+
   const onCompleted = (data: LoginMutation) => {
     const {
       login: { ok, token },
@@ -43,6 +46,7 @@ export const Login = () => {
       localStorage.setItem(LOCALSTORAGE_TOKEN, token);
       authTokenVar(token);
       isLoggedInVar(true);
+      console.log(me.data?.me.id);
     }
   };
 
