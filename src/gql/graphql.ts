@@ -791,6 +791,34 @@ export type CreateAccountMutation = {
   };
 };
 
+export type CookedOrdersSubscriptionVariables = Exact<{ [key: string]: never }>;
+
+export type CookedOrdersSubscription = {
+  __typename?: "Subscription";
+  cookedOrders: {
+    __typename?: "Order";
+    id: number;
+    status: OrderStatus;
+    total?: number | null;
+    driver?: { __typename?: "User"; email: string } | null;
+    customer?: { __typename?: "User"; email: string } | null;
+    restaurant?: { __typename?: "Restaurant"; name: string } | null;
+  };
+};
+
+export type TakeOrderMutationVariables = Exact<{
+  input: TakeOrderInput;
+}>;
+
+export type TakeOrderMutation = {
+  __typename?: "Mutation";
+  takeOrder: {
+    __typename?: "TakeOrderOutput";
+    ok: boolean;
+    error?: string | null;
+  };
+};
+
 export type LoginMutationVariables = Exact<{
   loginInput: LoginInput;
 }>;
@@ -1784,6 +1812,118 @@ export const CreateAccountDocument = {
   CreateAccountMutation,
   CreateAccountMutationVariables
 >;
+export const CookedOrdersDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "subscription",
+      name: { kind: "Name", value: "cookedOrders" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "cookedOrders" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
+                { kind: "Field", name: { kind: "Name", value: "total" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "driver" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "email" } },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "customer" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "email" } },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "restaurant" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "name" } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  CookedOrdersSubscription,
+  CookedOrdersSubscriptionVariables
+>;
+export const TakeOrderDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "takeOrder" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "input" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "TakeOrderInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "takeOrder" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "input" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "input" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "ok" } },
+                { kind: "Field", name: { kind: "Name", value: "error" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<TakeOrderMutation, TakeOrderMutationVariables>;
 export const LoginDocument = {
   kind: "Document",
   definitions: [
